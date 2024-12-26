@@ -7,8 +7,7 @@ const host = process.env.DB_HOST
 const port = process.env.DB_PORT
 const database = process.env.DB_DATABASE
 const collectionId = process.env.COLLECTION_ID
-
-const collectionPath = `/${collectionId}/`
+const deleteArchived = process.env.DELETE_ARCHIVED
 
 // Just a very brief check to see if the user provided the necessary environment variables to make the connection
 if (!user || !password || !host || !port || !database) {
@@ -30,19 +29,36 @@ try {
         })
     }
 
-    const collectionsToDelete = await sql`
-    WITH ids AS (SELECT id, location
-        FROM collection
-        WHERE location LIKE ${'%' + collectionPath + '%'}
-        UNION ALL
-        SELECT id, location
-        FROM collection
-        WHERE id = ${collectionId})
+    let collectionsToDelete = []
 
-    SELECT id, location
-    FROM ids
-    ORDER BY length(location) DESC
-    `
+    if (collectionId) {
+        const collectionPath = `/${collectionId}/`
+
+        collectionsToDelete = await sql`
+        WITH ids AS (SELECT id, location
+            FROM collection
+            WHERE location LIKE ${'%' + collectionPath + '%'}
+            UNION ALL
+            SELECT id, location
+            FROM collection
+            WHERE id = ${collectionId})
+
+        SELECT id, location
+        FROM ids
+        ORDER BY length(location) DESC`
+    }
+
+    if (deleteArchived) {
+        collectionsToDelete = await sql`
+        WITH ids AS (SELECT id, location
+            FROM collection
+            WHERE archived = true)
+
+        SELECT id, location
+        FROM ids
+        ORDER BY length(location) DESC`
+    }
+    
     const sqlArray = []
 
     sqlArray.push ('BEGIN TRANSACTION;')

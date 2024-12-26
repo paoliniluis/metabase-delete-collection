@@ -2,6 +2,8 @@
 
 You can't delete collections in Metabase, but this script will do its best to make that happen
 
+NOTE: this will only work fine in v49, as newer versions add more entities to the database which are not considered here. If you're running a version other than 49.x please consider making the changes to the script or simply open a feature request. You should NOT run this on different versions as you "might" leave orphan entities in the database
+
 ## Reason why you can't do this yet
 
 There are a lot of child dependencies in Metabase that doesn't allow a clean wipe of the collections entity in Metabase, e.g. permissions.

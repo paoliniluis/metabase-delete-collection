@@ -1,0 +1,15 @@
+{
+  "name": "metabase-delete-collection",
+  "version": "1.0.0",
+  "description": "You can't delete collections in Metabase, but this script will do its best to make that happen",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "run": "node index.js"
+  },
+  "author": "paoliniluis",
+  "license": "ISC",
+  "dependencies": {
+    "postgres": "^3.4.5"
+  }
+}
